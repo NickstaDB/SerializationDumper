@@ -1017,7 +1017,7 @@ public class SerializationDumper {
 		this.increaseIndent();
 		
 		//size
-		len = (int)this._data.pop();
+		len = this._data.pop() & 0xFF;
 		this.print("Length - " + len + " - 0x" + this.byteToHex((byte)(len & 0xff)));
 		
 		//contents
