@@ -5,9 +5,12 @@ The tool does not deserialize the stream (i.e. objects in the stream are not ins
 
 This tool was developed to support research into Java deserialization vulnerabilities after spending many hours manually decoding raw serialization streams to debug code!
 
-Download v1.0 built and ready to run from here: https://github.com/NickstaDB/SerializationDumper/releases/download/v1.0/SerializationDumper-v1.0.jar
+Download v1.01 built and ready to run from here: [https://github.com/NickstaDB/SerializationDumper/releases/download/v1.01/SerializationDumper-v1.01.jar](https://github.com/NickstaDB/SerializationDumper/releases/download/v1.01/SerializationDumper-v1.01.jar "SerializationDumper-v1.01.jar")
 
 \* See the limitations section below for more details.
+
+## Building
+Run `build.sh` or `build.bat` to compile the JAR from the latest sources.
 
 ## Usage
 SerializationDumper can take input in the form of hex-ascii encoded bytes on the command line, hex-ascii encoded bytes in a file, or a file containing raw serialized data. The following examples demonstrate its use:
@@ -50,7 +53,7 @@ SerializationDumper can take input in the form of hex-ascii encoded bytes on the
 ## Limitations
 The tool currently doesn't support the full serialization specification. If you have something it can't dump please get in touch with some sample data, unless the stream contains an externalContents element.
 
-'externalContents': If a class implements the interface java.io.Externalizable then it can use the *writeExternal* method  to write custom data to the serialization stream. This data can only be parsed by the corresponding *readExternal* method and it is not possible to read the data without access to the original class. Such classes will have the SC_EXTERNALIZABLE flag set in the classDescFlags field but they will not have the SC_BLOCKDATA flag set.
+'externalContents': If a class implements the interface java.io.Externalizable then it can use the *writeExternal* method  to write custom data to the serialization stream. This data can only be parsed by the corresponding *readExternal* method and it is not possible to read the data without access to the original class. Such classes will have the SC\_EXTERNALIZABLE flag set in the classDescFlags field but they will not have the SC\_BLOCKDATA flag set.
 
 ## Bug Reports/Improvements
-This tool was hacked together on the fly to support my own research but if you find the tool useful and have any bug reports or suggestions please get in touch either here or on Twitter (@NickstaDB).
+This tool was hacked together on the fly to support my own research but if you find the tool useful and have any bug reports or suggestions please get in touch either here or on Twitter ([@NickstaDB](http://twitter.com/NickstaDB "@NickstaDB on Twitter")).
