@@ -947,6 +947,9 @@ public class SerializationDumper {
 		//classDesc
 		this.readClassDesc();
 		
+		//Revert indent
+		this.decreaseIndent();
+		
 		//newHandle
 		this.newHandle();
 	}
