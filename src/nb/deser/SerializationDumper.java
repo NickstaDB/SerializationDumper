@@ -1,7 +1,13 @@
 package nb.deser;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import nb.deser.support.ClassDataDesc;
@@ -22,6 +28,7 @@ public class SerializationDumper {
 	private String _indent;												//A string representing the current indentation level for output printing
 	private int _handleValue;											//The current handle value
 	private final ArrayList<ClassDataDesc> _classDataDescriptions;		//Array of all class data descriptions to use with TC_REFERENCE classDesc elements
+	private boolean _enablePrinting;									//Flag to control console printing (used when rebuilding to test a rebuilt serialization stream)
 	
 	/*******************
 	 * Converts the command line parameter to an ArrayList of bytes and sends
@@ -37,11 +44,15 @@ public class SerializationDumper {
 		byte[] fileContents;
 		
 		//Validate number of command line args
-		if(args.length == 0 || args.length > 2) {
+		if(args.length == 0 || args.length > 3) {
 			System.out.println("Usage:");
 			System.out.println("\tSerializationDumper <hex-ascii-data>");
 			System.out.println("\tSerializationDumper -f <file-containing-hex-ascii>");
 			System.out.println("\tSerializationDumper -r <file-containing-raw-data>");
+			System.out.println("");
+			System.out.println("Rebuild a dumped stream:");
+			System.out.println("\tSerializationDumper -b <input-file> <output-file>");
+			return;
 		}
 		
 		//A single argument must be a hex-ascii encoded byte string
@@ -53,6 +64,10 @@ public class SerializationDumper {
 					(Character.digit(args[0].charAt(i * 2 + 1), 16))
 				));
 			}
+		} else if(args.length == 3 && args[0].toLowerCase().equals("-b")) {
+			//Three arguments starting with -r means we're rebuilding a stream from a dump
+			sd.rebuildStream(args[1], args[2]);
+			return;
 		} else {
 			//Two arguments means the data is in a file, read the file contents
 			f = new File(args[1]);
@@ -75,6 +90,9 @@ public class SerializationDumper {
 				for(int i = 0; i < fileContents.length; ++i) {
 					sd._data.add(fileContents[i]);
 				}
+			} else if(args[0].toLowerCase().equals("-b")) {
+				System.out.println("Error: The -b option requires two parameters, the input file and the output file.");
+				return;
 			}
 		}
 		
@@ -91,6 +109,7 @@ public class SerializationDumper {
 		this._indent = "";
 		this._handleValue = 0x7e0000;
 		this._classDataDescriptions = new ArrayList<ClassDataDesc>();
+		this._enablePrinting = true;
 	}
 	
 	/*******************
@@ -99,7 +118,9 @@ public class SerializationDumper {
 	 * @param s The string to print out.
 	 ******************/
 	private void print(String s) {
-		System.out.println(this._indent + s);
+		if(this._enablePrinting == true) {
+			System.out.println(this._indent + s);
+		}
 	}
 	
 	/*******************
@@ -129,6 +150,20 @@ public class SerializationDumper {
 	}
 	
 	/*******************
+	 * Convert a hex-ascii string to a byte array.
+	 * 
+	 * @param h The hex-ascii string to convert to bytes.
+	 * @return A byte array containing the values from the hex-ascii string.
+	 ******************/
+	private byte[] hexStrToBytes(String h) {
+		byte[] outBytes = new byte[h.length() / 2];
+		for(int i = 0; i < outBytes.length; ++i) {
+			outBytes[i] = (byte)((Character.digit(h.charAt(i * 2), 16) << 4) + Character.digit(h.charAt((i * 2) + 1), 16));
+		}
+		return outBytes;
+	}
+	
+	/*******************
 	 * Convert an int to a hex-ascii string.
 	 * 
 	 * @param i The int to convert to a string.
@@ -153,6 +188,80 @@ public class SerializationDumper {
 		//Increment the next handle value and return the one we just assigned
 		this._handleValue++;
 		return handleValue;
+	}
+	
+	/*******************
+	 * Parse output from parseStream() and turn it back into a binary
+	 * serialization stream.
+	 ******************/
+	private void rebuildStream(String dumpFile, String outputFile) {
+		String inputLine;
+		BufferedReader reader;
+		ByteArrayOutputStream byteStream;
+		FileOutputStream outputFileStream;
+		byte[] rebuiltStream;
+		
+		//Parse the input file (a serialization stream dumped by this program)
+		System.out.println("Rebuilding serialization stream from dump: " + dumpFile);
+		try {
+			byteStream = new ByteArrayOutputStream();
+			reader = new BufferedReader(new FileReader(dumpFile));
+			while((inputLine = reader.readLine()) != null) {
+				if(inputLine.trim().startsWith("newHandle ") == false) {
+					if(inputLine.contains("0x")) {
+						if(inputLine.trim().startsWith("Value - ")) {
+							inputLine = inputLine.substring(inputLine.lastIndexOf("0x") + 2);
+						} else {
+							inputLine = inputLine.split("0x", 2)[1];
+						}
+						if(inputLine.contains(" - ")) {
+							inputLine = inputLine.split("-", 2)[0];
+						}
+						inputLine = inputLine.replace(" ", "");
+						byteStream.write(hexStrToBytes(inputLine));
+					}
+				}
+			}
+			reader.close();
+		} catch(FileNotFoundException fnfe) {
+			System.out.println("Error: input file not found (" + dumpFile + ").");
+			System.out.println(fnfe.getMessage());
+			return;
+		} catch(IOException ioe) {
+			System.out.println("Error: an exception occurred whilst reading the input file (" + dumpFile + ").");
+			System.out.println(ioe.getMessage());
+			return;
+		}
+		
+		//Test the rebuilt serialization stream
+		System.out.println("Stream rebuilt, attempting to parse...");
+		this._enablePrinting = false;
+		rebuiltStream = byteStream.toByteArray();
+		for(byte b: rebuiltStream) {
+			this._data.add(b);
+		}
+		try {
+			this.parseStream();
+		} catch(Exception e) {
+			System.out.println("Warning: An exception was thrown whilst attempting to parse the rebuilt stream.");
+			System.out.println(e.getMessage());
+		}
+		
+		//Save the stream to disk
+		try {
+			outputFileStream = new FileOutputStream(outputFile);
+			outputFileStream.write(rebuiltStream);
+			outputFileStream.close();
+		} catch(FileNotFoundException fnfe) {
+			System.out.println("Error: exception opening output file (" + outputFile + ").");
+			System.out.println(fnfe.getMessage());
+			return;
+		} catch(IOException ioe) {
+			System.out.println("Error: an exception occurred whilst writing the output file (" + outputFile + ").");
+			System.out.println(ioe.getMessage());
+			return;
+		}
+		System.out.println("Done, rebuilt stream written to " + outputFile);
 	}
 	
 	/*******************
