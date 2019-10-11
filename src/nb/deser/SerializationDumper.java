@@ -1363,7 +1363,9 @@ public class SerializationDumper {
 	 ******************/
 	private void readCharField() {
 		byte b1 = this._data.pop();
-		this.print("(char)" + (char)b1 + " - 0x" + this.byteToHex(b1));
+		byte b2 = this._data.pop();
+		char c1 = (char)(((b1 << 8) & 0xff00) + b2 & 0xff);
+		this.print("(char)" + (char)c1 + " - 0x" + this.byteToHex(b1) + " " + this.byteToHex(b2));
 	}
 	
 	/*******************
