@@ -1512,6 +1512,10 @@ public class SerializationDumper {
 				this.readNewArray();
 				break;
 				
+			case (byte)0x7e:		//TC_ENUM
+				this.readNewEnum();
+				break;
+				
 			default:				//Unknown/unsupported
 				throw new RuntimeException("Error: Unexpected identifier for object field value 0x" + this.byteToHex(this._data.peek()));
 		}
