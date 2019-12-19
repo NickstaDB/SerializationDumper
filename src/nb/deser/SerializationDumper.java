@@ -836,6 +836,7 @@ public class SerializationDumper {
 	 ******************/
 	private void readClassData(ClassDataDesc cdd) {
 		ClassDetails cd;
+		int classIndex;
 		
 		//Print header and indent
 		this.print("classdata");
@@ -854,7 +855,7 @@ public class SerializationDumper {
 			}
 			
 			//Iterate backwards through the classes as we need to deal with the most super (last added) class first
-			for(int classIndex = cdd.getClassCount() - 1; classIndex >= 0; --classIndex) {
+			for(classIndex = cdd.getClassCount() - 1; classIndex >= 0; --classIndex) {
 				//Get the class details
 				cd = cdd.getClassDetails(classIndex);
 				
