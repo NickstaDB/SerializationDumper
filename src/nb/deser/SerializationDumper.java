@@ -491,7 +491,7 @@ public class SerializationDumper {
 				}
 				
 				//Invalid classDesc reference handle
-				throw new RuntimeException("Error: Invalid classDesc reference (0x" + this.intToHex(refHandle));
+				throw new RuntimeException("Error: Invalid classDesc reference (0x" + this.intToHex(refHandle) + ")");
 				
 			default:
 				this.print("Invalid classDesc type 0x" + this.byteToHex(this._data.peek()));
@@ -517,7 +517,9 @@ public class SerializationDumper {
 				return cdd;
 				
 			case (byte)0x7d:		//TC_PROXYCLASSDESC
-				return this.readTC_PROXYCLASSDESC();
+				cdd = this.readTC_PROXYCLASSDESC();
+				this._classDataDescriptions.add(cdd);
+				return cdd;
 				
 			default:
 				this.print("Invalid newClassDesc type 0x" + this.byteToHex(this._data.peek()));
@@ -578,9 +580,11 @@ public class SerializationDumper {
 		if(b1 != (byte)0x7d) { throw new RuntimeException("Error: Illegal value for TC_PROXYCLASSDESC (should be 0x7d)"); }
 		this.increaseIndent();
 		
+		//Create the new class descriptor
+		cdd.addClass("<Dynamic Proxy Class>");
+		
 		//newHandle
-		//NB: Not clear whether a TC_PROXYCLASSDESC can be referenced in a classDesc element (e.g. object or array classDesc). Ignore this for now...
-		this.newHandle();
+		cdd.setLastClassHandle(this.newHandle());	//Set the reference handle for the most recently added class
 		
 		//proxyClassDescInfo
 		this.readProxyClassDescInfo(cdd);	//Read proxy class desc info, add the super class description to the ClassDataDesc if one is found
@@ -792,7 +796,7 @@ public class SerializationDumper {
 				break;
 				
 			case 'Z':		//boolean
-				this.print("Boolea - Z - 0x" + this.byteToHex(b1));
+				this.print("Boolean - Z - 0x" + this.byteToHex(b1));
 				break;
 				
 			case '[':		//array
@@ -839,6 +843,16 @@ public class SerializationDumper {
 		
 		//Print class data if there is any
 		if(cdd != null) {
+			//Check for SC_EXTERNALIZABLE flags in any of the classes
+			for(classIndex = 0; classIndex < cdd.getClassCount(); ++classIndex) {
+				if(cdd.getClassDetails(classIndex).isSC_EXTERNALIZABLE() == true) {
+					this.print("externalContents");
+					this.increaseIndent();
+					this.print("Unable to parse externalContents as the format is specific to the implementation class.");
+					throw new RuntimeException("Error: Unable to parse externalContents element.");
+				}
+			}
+			
 			//Iterate backwards through the classes as we need to deal with the most super (last added) class first
 			for(int classIndex = cdd.getClassCount() - 1; classIndex >= 0; --classIndex) {
 				//Get the class details
@@ -881,15 +895,6 @@ public class SerializationDumper {
 					
 					//Revert indent
 					this.decreaseIndent();
-				}
-				
-				//Handle the 'externalContents' case - we're unable to read this as the format is dependent on the implementation class
-				if(cd.isSC_EXTERNALIZABLE() && !cd.isSC_BLOCKDATA()) {
-					//externalContents
-					this.print("externalContents");
-					this.increaseIndent();
-					this.print("Unable to parse externalContents as the format is specific to the implementation class.");
-					throw new RuntimeException("Error: Unable to parse externalContents element.");
 				}
 				
 				//Revert indent for this class
