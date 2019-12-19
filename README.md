@@ -112,3 +112,5 @@ If the stream contains any `TC_REFERENCE` elements and you modify it to remove a
 
 ## Bug Reports/Improvements
 This tool was hacked together on the fly to support my own research but if you find the tool useful and have any bug reports or suggestions please get in touch either here or on Twitter ([@NickstaDB](http://twitter.com/NickstaDB "@NickstaDB on Twitter")).
+
+**Please** include a sample of the data you were trying to dump when submitting bug reports, this makes it far easier for me to debug and work out what the problem is, cheers!
