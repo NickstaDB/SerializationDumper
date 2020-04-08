@@ -57,8 +57,20 @@ public class SerializationDumper {
 		
 		//A single argument must be a hex-ascii encoded byte string
 		if(args.length == 1) {
+			//Validation
+			if(args.length % 2 == 1) {
+				System.out.println("Error: Data encoded as hex and passed on the command line must have a length that is a multiple of 2.");
+				return;
+			}
+			
 			//Load the data into the serialization dumper
 			for(int i = 0; i < args[0].length() / 2; ++i) {
+				//Validation
+				if(Character.digit(args[0].charAt(i * 2), 16) == -1 || Character.digit(args[0].charAt(i * 2 + 1), 16) == -1) {
+					System.out.println("Error: Data encoded as hex and passed on the command line must only contain hex digits.");
+					return;
+				}
+				
 				sd._data.add((byte)(
 					(Character.digit(args[0].charAt(i * 2), 16) << 4) +
 					(Character.digit(args[0].charAt(i * 2 + 1), 16))
