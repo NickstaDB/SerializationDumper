@@ -58,7 +58,7 @@ public class SerializationDumper {
 		//A single argument must be a hex-ascii encoded byte string
 		if(args.length == 1) {
 			//Validation
-			if(args.length % 2 == 1) {
+			if(args[0].length() % 2 == 1) {
 				System.out.println("Error: Data encoded as hex and passed on the command line must have a length that is a multiple of 2.");
 				return;
 			}
