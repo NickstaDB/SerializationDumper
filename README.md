@@ -5,7 +5,7 @@ The tool does not deserialize the stream (i.e. objects in the stream are not ins
 
 This tool was developed to support research into Java deserialization vulnerabilities after spending many hours manually decoding raw serialization streams to debug code!
 
-Download v1.11 built and ready to run from here: [https://github.com/NickstaDB/SerializationDumper/releases/download/1.11/SerializationDumper-v1.11.jar](https://github.com/NickstaDB/SerializationDumper/releases/download/1.11/SerializationDumper-v1.11.jar "SerializationDumper-v1.11.jar")
+Download v1.11 built and ready to run from here: [https://github.com/NickstaDB/SerializationDumper/releases/download/1.13/SerializationDumper-v1.13.jar](https://github.com/NickstaDB/SerializationDumper/releases/download/1.13/SerializationDumper-v1.13.jar "SerializationDumper-v1.13.jar")
 
 \* See the limitations section below for more details.
 
