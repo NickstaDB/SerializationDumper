@@ -38,8 +38,7 @@ public class SerializationDumper {
 	 * @throws Exception If an exception occurs.
 	 ******************/
 	public static void main(String[] args) throws Exception {
-		File f;
-		FileInputStream fis;
+		File f;		
 		SerializationDumper sd = new SerializationDumper();
 		byte[] fileContents;
 		
@@ -83,10 +82,10 @@ public class SerializationDumper {
 		} else {
 			//Two arguments means the data is in a file, read the file contents
 			f = new File(args[1]);
-			fis = new FileInputStream(f);
-			fileContents = new byte[(int)f.length()];
-			fis.read(fileContents);
-			fis.close();
+			try(FileInputStream fis = new FileInputStream(f)){
+				fileContents = new byte[(int)f.length()];
+				fis.read(fileContents);
+                        }
 			
 			//Load the file contents into the serialization dumper based on the expected format
 			if(args[0].toLowerCase().equals("-f")) {
@@ -207,34 +206,32 @@ public class SerializationDumper {
 	 * serialization stream.
 	 ******************/
 	private void rebuildStream(String dumpFile, String outputFile) {
-		String inputLine;
-		BufferedReader reader;
-		ByteArrayOutputStream byteStream;
-		FileOutputStream outputFileStream;
+		String inputLine;		
+		ByteArrayOutputStream byteStream;		
 		byte[] rebuiltStream;
 		
 		//Parse the input file (a serialization stream dumped by this program)
 		System.out.println("Rebuilding serialization stream from dump: " + dumpFile);
 		try {
 			byteStream = new ByteArrayOutputStream();
-			reader = new BufferedReader(new FileReader(dumpFile));
-			while((inputLine = reader.readLine()) != null) {
-				if(inputLine.trim().startsWith("newHandle ") == false) {
-					if(inputLine.contains("0x")) {
-						if(inputLine.trim().startsWith("Value - ")) {
-							inputLine = inputLine.substring(inputLine.lastIndexOf("0x") + 2);
-						} else {
-							inputLine = inputLine.split("0x", 2)[1];
+			try(BufferedReader reader = new BufferedReader(new FileReader(dumpFile))){
+				while((inputLine = reader.readLine()) != null) {
+					if(inputLine.trim().startsWith("newHandle ") == false) {
+						if(inputLine.contains("0x")) {
+							if(inputLine.trim().startsWith("Value - ")) {
+								inputLine = inputLine.substring(inputLine.lastIndexOf("0x") + 2);
+							} else {
+								inputLine = inputLine.split("0x", 2)[1];
+							}
+							if(inputLine.contains(" - ")) {
+								inputLine = inputLine.split("-", 2)[0];
+							}
+							inputLine = inputLine.replace(" ", "");
+							byteStream.write(hexStrToBytes(inputLine));
 						}
-						if(inputLine.contains(" - ")) {
-							inputLine = inputLine.split("-", 2)[0];
-						}
-						inputLine = inputLine.replace(" ", "");
-						byteStream.write(hexStrToBytes(inputLine));
 					}
-				}
-			}
-			reader.close();
+                        	}
+                        }
 		} catch(FileNotFoundException fnfe) {
 			System.out.println("Error: input file not found (" + dumpFile + ").");
 			System.out.println(fnfe.getMessage());
@@ -261,9 +258,9 @@ public class SerializationDumper {
 		
 		//Save the stream to disk
 		try {
-			outputFileStream = new FileOutputStream(outputFile);
-			outputFileStream.write(rebuiltStream);
-			outputFileStream.close();
+			try(FileOutputStream outputFileStream = new FileOutputStream(outputFile)){
+				outputFileStream.write(rebuiltStream);
+                        }
 		} catch(FileNotFoundException fnfe) {
 			System.out.println("Error: exception opening output file (" + outputFile + ").");
 			System.out.println(fnfe.getMessage());
