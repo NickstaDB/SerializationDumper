@@ -324,7 +324,7 @@ public class SerializationDumper {
 		//Remainder of the stream consists of one or more 'content' elements
 		this.print("Contents");
 		this.increaseIndent();
-		while(this._data.size() > 0) {
+		while(!this._data.isEmpty()) {
 			this.readContentElement();
 		}
 		this.decreaseIndent();
