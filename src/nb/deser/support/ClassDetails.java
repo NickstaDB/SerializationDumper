@@ -1,6 +1,7 @@
 package nb.deser.support;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /***********************************************************
  * Support class for serialization data parsing that holds
@@ -116,7 +117,7 @@ public class ClassDetails {
 	 * 
 	 * @return An array of field descriptions for the class.
 	 ******************/
-	public ArrayList<ClassField> getFields() {
+	public List<ClassField> getFields() {
 		return this._fieldDescriptions;
 	}
 	
