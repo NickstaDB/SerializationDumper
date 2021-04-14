@@ -75,7 +75,7 @@ public class SerializationDumper {
 					(Character.digit(args[0].charAt(i * 2 + 1), 16))
 				));
 			}
-		} else if(args.length == 3 && args[0].toLowerCase().equals("-b")) {
+		} else if(args.length == 3 && args[0].equalsIgnoreCase("-b")) {
 			//Three arguments starting with -r means we're rebuilding a stream from a dump
 			sd.rebuildStream(args[1], args[2]);
 			return;
@@ -88,7 +88,7 @@ public class SerializationDumper {
                         }
 			
 			//Load the file contents into the serialization dumper based on the expected format
-			if(args[0].toLowerCase().equals("-f")) {
+			if(args[0].equalsIgnoreCase("-f")) {
 				//Hex-ascii encoded file contents
 				for(int i = 0; i < fileContents.length / 2; ++i) {
 					sd._data.add((byte)(
@@ -96,12 +96,12 @@ public class SerializationDumper {
 						(Character.digit(fileContents[i * 2 + 1], 16))
 					));
 				}
-			} else if(args[0].toLowerCase().equals("-r")) {
+			} else if(args[0].equalsIgnoreCase("-r")) {
 				//Raw bytes
 				for(int i = 0; i < fileContents.length; ++i) {
 					sd._data.add(fileContents[i]);
 				}
-			} else if(args[0].toLowerCase().equals("-b")) {
+			} else if(args[0].equalsIgnoreCase("-b")) {
 				System.out.println("Error: The -b option requires two parameters, the input file and the output file.");
 				return;
 			}
