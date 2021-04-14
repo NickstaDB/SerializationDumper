@@ -116,10 +116,10 @@ public class SerializationDumper {
 	 * Construct a SerializationDumper object.
 	 ******************/
 	public SerializationDumper() {
-		this._data = new LinkedList<Byte>();
+		this._data = new LinkedList<>();
 		this._indent = "";
 		this._handleValue = 0x7e0000;
-		this._classDataDescriptions = new ArrayList<ClassDataDesc>();
+		this._classDataDescriptions = new ArrayList<>();
 		this._enablePrinting = true;
 	}
 	

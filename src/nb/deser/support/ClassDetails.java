@@ -27,7 +27,7 @@ public class ClassDetails {
 		this._className = className;
 		this._refHandle = -1;
 		this._classDescFlags = 0;
-		this._fieldDescriptions = new ArrayList<ClassField>();
+		this._fieldDescriptions = new ArrayList<>();
 	}
 	
 	/*******************

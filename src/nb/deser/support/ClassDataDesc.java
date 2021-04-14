@@ -20,7 +20,7 @@ public class ClassDataDesc {
 	 * Construct the class data description object.
 	 ******************/
 	public ClassDataDesc() {
-		this._classDetails = new ArrayList<ClassDetails>();
+		this._classDetails = new ArrayList<>();
 	}
 	
 	/*******************
@@ -46,7 +46,7 @@ public class ClassDataDesc {
 		ArrayList<ClassDetails> cd;
 		
 		//Build a list of the ClassDetails objects for the new ClassDataDesc
-		cd = new ArrayList<ClassDetails>();
+		cd = new ArrayList<>();
 		for(int i = index; i < this._classDetails.size(); ++i) {
 			cd.add(this._classDetails.get(i));
 		}
