@@ -129,7 +129,7 @@ public class SerializationDumper {
 	 * @param s The string to print out.
 	 ******************/
 	private void print(String s) {
-		if(this._enablePrinting == true) {
+		if(this._enablePrinting) {
 			System.out.println(this._indent + s);
 		}
 	}
@@ -216,7 +216,7 @@ public class SerializationDumper {
 			byteStream = new ByteArrayOutputStream();
 			try(BufferedReader reader = new BufferedReader(new FileReader(dumpFile))){
 				while((inputLine = reader.readLine()) != null) {
-					if(inputLine.trim().startsWith("newHandle ") == false) {
+					if(!inputLine.trim().startsWith("newHandle ")) {
 						if(inputLine.contains("0x")) {
 							if(inputLine.trim().startsWith("Value - ")) {
 								inputLine = inputLine.substring(inputLine.lastIndexOf("0x") + 2);
@@ -855,7 +855,7 @@ public class SerializationDumper {
 		if(cdd != null) {
 			//Check for SC_EXTERNALIZABLE flags in any of the classes
 			for(classIndex = 0; classIndex < cdd.getClassCount(); ++classIndex) {
-				if(cdd.getClassDetails(classIndex).isSC_EXTERNALIZABLE() == true) {
+				if(cdd.getClassDetails(classIndex).isSC_EXTERNALIZABLE()) {
 					this.print("externalContents");
 					this.increaseIndent();
 					this.print("Unable to parse externalContents as the format is specific to the implementation class.");
