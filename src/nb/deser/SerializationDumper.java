@@ -926,8 +926,6 @@ public class SerializationDumper {
 	 * @param f A description of the field data to read.
 	 ******************/
 	private void readClassDataField(ClassField cf) {
-		byte b1, b2, b3, b4, b5, b6, b7, b8;
-		
 		//Print the field name and indent
 		this.print(cf.getName());
 		this.increaseIndent();
@@ -1204,8 +1202,6 @@ public class SerializationDumper {
 	 *	TC_LONGSTRING	(0x7c)
 	 ******************/
 	private String readNewString() {
-		int handle;
-		
 		//Peek the type and delegate to the appropriate method
 		switch(this._data.peek()) {
 			case (byte)0x74:		//TC_STRING
