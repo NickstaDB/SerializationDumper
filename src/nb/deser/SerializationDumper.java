@@ -1131,7 +1131,7 @@ public class SerializationDumper {
 	 * TC_BLOCKDATA		(unsigned byte)size		contents
 	 ******************/
 	private void readBlockData() {
-		String contents = "";
+		StringBuilder contents = new StringBuilder();
 		int len;
 		byte b1;
 		
@@ -1147,9 +1147,9 @@ public class SerializationDumper {
 		
 		//contents
 		for(int i = 0; i < len; ++i) {
-			contents += this.byteToHex(this._data.pop());
+			contents.append( this.byteToHex(this._data.pop()) );
 		}
-		this.print("Contents - 0x" + contents);
+		this.print("Contents - 0x" + contents.toString());
 		
 		//Drop indent back
 		this.decreaseIndent();
@@ -1161,7 +1161,7 @@ public class SerializationDumper {
 	 * TC_BLOCKDATALONG		(int)size	contents
 	 ******************/
 	private void readLongBlockData() {
-		String contents = "";
+		StringBuilder contents = new StringBuilder();
 		long len;
 		byte b1, b2, b3, b4;
 		
@@ -1186,9 +1186,9 @@ public class SerializationDumper {
 		
 		//contents
 		for(long l = 0; l < len; ++l) {
-			contents += this.byteToHex(this._data.pop());
+			contents.append( this.byteToHex(this._data.pop()) );
 		}
-		this.print("Contents - 0x" + contents);
+		this.print("Contents - 0x" + contents.toString());
 		
 		//Drop indent back
 		this.decreaseIndent();
@@ -1286,7 +1286,8 @@ public class SerializationDumper {
 	 * (short)length	contents
 	 ******************/
 	private String readUtf() {
-		String content = "", hex = "";
+		StringBuilder content = new StringBuilder();
+		StringBuilder hex = new StringBuilder();
 		byte b1, b2;
 		int len;
 		
@@ -1302,13 +1303,13 @@ public class SerializationDumper {
 		//Contents
 		for(int i = 0; i < len; ++i) {
 			b1 = this._data.pop();
-			content += (char)b1;
-			hex += this.byteToHex(b1);
+			content.append( (char)b1 );
+			hex.append(this.byteToHex(b1) );
 		}
-		this.print("Value - " + content + " - 0x" + hex);
+		this.print("Value - " + content.toString() + " - 0x" + hex.toString());
 		
 		//Return the string
-		return content;
+		return content.toString();
 	}
 	
 	/*******************
@@ -1317,7 +1318,8 @@ public class SerializationDumper {
 	 * (long)length		contents
 	 ******************/
 	private String readLongUtf() {
-		String content = "", hex = "";
+		StringBuilder content = new StringBuilder();
+		StringBuilder hex = new StringBuilder();
 		byte b1, b2, b3, b4, b5, b6, b7, b8;
 		long len;
 		
@@ -1346,13 +1348,13 @@ public class SerializationDumper {
 		//Contents
 		for(long l = 0; l < len; ++l) {
 			b1 = this._data.pop();
-			content += (char)b1;
-			hex += this.byteToHex(b1);
+			content.append( (char)b1 );
+			hex.append( this.byteToHex(b1) );
 		}
-		this.print("Value - " + content + " - 0x" + hex);
+		this.print("Value - " + content.toString() + " - 0x" + hex.toString());
 		
 		//Return the string
-		return content;
+		return content.toString();
 	}
 	
 	/*******************
