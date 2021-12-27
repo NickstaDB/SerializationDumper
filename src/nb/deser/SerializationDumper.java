@@ -622,7 +622,7 @@ public class SerializationDumper {
 		if((b1 & 0x01) == 0x01) { classDescFlags += "SC_WRITE_METHOD | "; }
 		if((b1 & 0x02) == 0x02) { classDescFlags += "SC_SERIALIZABLE | "; }
 		if((b1 & 0x04) == 0x04) { classDescFlags += "SC_EXTERNALIZABLE | "; }
-		if((b1 & 0x08) == 0x08) { classDescFlags += "SC_BLOCKDATA | "; }
+		if((b1 & 0x08) == 0x08) { classDescFlags += "SC_BLOCK_DATA | "; }
 		if(classDescFlags.length() > 0) { classDescFlags = classDescFlags.substring(0, classDescFlags.length() - 3); }
 		this.print("classDescFlags - 0x" + this.byteToHex(b1) + " - " + classDescFlags);
 		
@@ -632,7 +632,7 @@ public class SerializationDumper {
 		//Validate classDescFlags
 		if((b1 & 0x02) == 0x02) {
 			if((b1 & 0x04) == 0x04) { throw new RuntimeException("Error: Illegal classDescFlags, SC_SERIALIZABLE is not compatible with SC_EXTERNALIZABLE."); }
-			if((b1 & 0x08) == 0x08) { throw new RuntimeException("Error: Illegal classDescFlags, SC_SERIALIZABLE is not compatible with SC_BLOCKDATA."); }
+			if((b1 & 0x08) == 0x08) { throw new RuntimeException("Error: Illegal classDescFlags, SC_SERIALIZABLE is not compatible with SC_BLOCK_DATA."); }
 		} else if((b1 & 0x04) == 0x04) {
 			if((b1 & 0x01) == 0x01) { throw new RuntimeException("Error: Illegal classDescFlags, SC_EXTERNALIZABLE is not compatible with SC_WRITE_METHOD."); }
 		} else if(b1 != 0x00) {
@@ -883,7 +883,7 @@ public class SerializationDumper {
 				boolean hasBlockData = cd.isSC_SERIALIZABLE() && cd.isSC_WRITE_METHOD();
 				
 				if(cd.isSC_EXTERNALIZABLE()) {
-					if(cd.isSC_BLOCKDATA()) {
+					if(cd.isSC_BLOCK_DATA()) {
 						hasBlockData = true;
 					}
 					//Protocol version 1 does not use block data; cannot parse it
