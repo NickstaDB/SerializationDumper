@@ -856,16 +856,6 @@ public class SerializationDumper {
 		
 		//Print class data if there is any
 		if(cdd != null) {
-			//Check for SC_EXTERNALIZABLE flags in any of the classes
-			for(classIndex = 0; classIndex < cdd.getClassCount(); ++classIndex) {
-				if(cdd.getClassDetails(classIndex).isSC_EXTERNALIZABLE() == true) {
-					this.print("externalContents");
-					this.increaseIndent();
-					this.print("Unable to parse externalContents as the format is specific to the implementation class.");
-					throw new RuntimeException("Error: Unable to parse externalContents element.");
-				}
-			}
-			
 			//Iterate backwards through the classes as we need to deal with the most super (last added) class first
 			for(classIndex = cdd.getClassCount() - 1; classIndex >= 0; --classIndex) {
 				//Get the class details
@@ -890,8 +880,22 @@ public class SerializationDumper {
 					this.decreaseIndent();
 				}
 				
-				//Read object annotations if the right flags are set
-				if((cd.isSC_SERIALIZABLE() && cd.isSC_WRITE_METHOD()) || (cd.isSC_EXTERNALIZABLE() && cd.isSC_BLOCKDATA())) {
+				boolean hasBlockData = cd.isSC_SERIALIZABLE() && cd.isSC_WRITE_METHOD();
+				
+				if(cd.isSC_EXTERNALIZABLE()) {
+					if(cd.isSC_BLOCKDATA()) {
+						hasBlockData = true;
+					}
+					//Protocol version 1 does not use block data; cannot parse it
+					else {
+						this.increaseIndent();
+						this.print("Unable to parse externalContents for protocol version 1.");
+						throw new RuntimeException("Error: Unable to parse externalContents element.");
+					}
+				}
+				
+				//Read object annotations
+				if(hasBlockData) {
 					//Start the object annotations section and indent
 					this.print("objectAnnotation");
 					this.increaseIndent();
