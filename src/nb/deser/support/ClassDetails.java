@@ -94,11 +94,11 @@ public class ClassDetails {
 	}
 	
 	/*******************
-	 * Check whether the class is SC_BLOCKDATA.
+	 * Check whether the class is SC_BLOCK_DATA.
 	 * 
-	 * @return True if the classDescFlags includes SC_BLOCKDATA.
+	 * @return True if the classDescFlags includes SC_BLOCK_DATA.
 	 ******************/
-	public boolean isSC_BLOCKDATA() {
+	public boolean isSC_BLOCK_DATA() {
 		return (this._classDescFlags & 0x08) == 0x08;
 	}
 	

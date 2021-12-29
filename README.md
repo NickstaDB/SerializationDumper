@@ -98,12 +98,12 @@ See the limitations section below for stream rebuilding limitations.
 
 ## Limitations
 
-###Deserialization/Dump Mode
-The tool cannot deserialize all Java serialized data streams and may not be fully compliant with the Java serialization specification. In particular, if the stream contains an *externalContents* element then it cannot be deserialized without using the original class. If you have something that cannot be dumped which does not include an `externalContents` element then please get in touch with some sample data so I can look at producing a fix!
+### Deserialization/Dump Mode
+The tool cannot deserialize all Java serialized data streams and may not be fully compliant with the Java serialization specification. In particular, if the stream contains an *externalContents* element written with serialization protocol version 1 then it cannot be deserialized without using the original class. If you have something that cannot be dumped which does not include an `externalContents` element then please get in touch with some sample data so I can look at producing a fix!
 
-***externalContents:*** If a class implements the interface `java.io.Externalizable` then it can use the `writeExternal` method  to write custom data to the serialization stream. This data can only be parsed by the corresponding `readExternal` method so it is not possible to read the data without access to the original class. Such classes will have the `SC_EXTERNALIZABLE` flag set in the `classDescFlags` field but they will not have the `SC_BLOCKDATA` flag set.
+***externalContents:*** If a class implements the interface `java.io.Externalizable` then it can use the `writeExternal` method to write custom data to the serialization stream. This data can only be parsed by the corresponding `readExternal` method so it is often not possible to fully interpret the binary data data without access to the original class. Such classes will have the `SC_EXTERNALIZABLE` flag set in the `classDescFlags` field. For serialization protocol version 1 they will not have the `SC_BLOCK_DATA` flag set and this tool cannot parse the data at all. However, version 1 is only used by old JDK versions (JDK 1.1 and older), or when explicitly enabled through `java.io.ObjectOutputStream.useProtocolVersion(int)`. Therefore in most cases this tool can read the external data (or at least display the hex representation of the binary data).
 
-###Serialization/Rebuild Mode
+### Serialization/Rebuild Mode
 The stream rebuild mode currently only operates on the hex-ascii encoded bytes from the dumped data. For that reason, changing the string "ABCD" to "AAAABBBB" won't have the desired effect of producing the bytes 0x4141414142424242 in the output file. A future update may improve this but for now you'll have to do your hex-ascii encoding of strings manually!
 
 Length fields aren't updated automatically during stream rebuilding. This may be desirable or not, but if you modify a string value in a way that changes the length just be aware that you may also need to modify the length (hex-ascii) field accordingly. The same applies to arrays.
@@ -111,6 +111,6 @@ Length fields aren't updated automatically during stream rebuilding. This may be
 If the stream contains any `TC_REFERENCE` elements and you modify it to remove an element that includes a `newHandle` field then you may break the references in the stream unless you manually update them. Reference handles/IDs are incremental and start at `0x7e0000` so the first `newHandle` field is reference by `0x7e0000`, the second by `0x7e0001`, and so on. If the first element with a `newHandle` field is removed from the stream then any `TC_REFERENCE` elements in the stream must be modified to refer to a handle value one less than what they originally referred to.
 
 ## Bug Reports/Improvements
-This tool was hacked together on the fly to support my own research but if you find the tool useful and have any bug reports or suggestions please get in touch either here or on Twitter ([@NickstaDB](http://twitter.com/NickstaDB "@NickstaDB on Twitter")).
+This tool was hacked together on the fly to support my own research but if you find the tool useful and have any bug reports or suggestions please get in touch either here or on Twitter ([@NickstaDB](https://twitter.com/NickstaDB "@NickstaDB on Twitter")).
 
 **Please** include a sample of the data you were trying to dump when submitting bug reports, this makes it far easier for me to debug and work out what the problem is, cheers!
