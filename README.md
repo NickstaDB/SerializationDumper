@@ -5,7 +5,7 @@ The tool does not deserialize the stream (i.e. objects in the stream are not ins
 
 This tool was developed to support research into Java deserialization vulnerabilities after spending many hours manually decoding raw serialization streams to debug code!
 
-Download v1.11 built and ready to run from here: [https://github.com/NickstaDB/SerializationDumper/releases/download/1.13/SerializationDumper-v1.13.jar](https://github.com/NickstaDB/SerializationDumper/releases/download/1.13/SerializationDumper-v1.13.jar "SerializationDumper-v1.13.jar")
+Download v1.13 built and ready to run from here: [https://github.com/NickstaDB/SerializationDumper/releases/download/1.13/SerializationDumper-v1.13.jar](https://github.com/NickstaDB/SerializationDumper/releases/download/1.13/SerializationDumper-v1.13.jar "SerializationDumper-v1.13.jar")
 
 \* See the limitations section below for more details.
 
@@ -17,7 +17,7 @@ Run `build.sh` or `build.bat` to compile the JAR from the latest sources.
 ## Usage
 SerializationDumper can take input in the form of hex-ascii encoded bytes on the command line, hex-ascii encoded bytes in a file, or a file containing raw serialized data. The following examples demonstrate its use:
 
-    $ java -jar SerializationDumper-v1.1.jar aced0005740004414243447071007e0000
+    $ java -jar SerializationDumper-v1.13.jar aced0005740004414243447071007e0000
     STREAM_MAGIC - 0xac ed
     STREAM_VERSION - 0x00 05
     Contents
@@ -29,13 +29,13 @@ SerializationDumper can take input in the form of hex-ascii encoded bytes on the
       TC_REFERENCE - 0x71
         Handle - 8257536 - 0x00 7e 00 00
     
-    $ java -jar SerializationDumper-v1.1.jar -f hex-ascii-input-file.txt
+    $ java -jar SerializationDumper-v1.13.jar -f hex-ascii-input-file.txt
     STREAM_MAGIC - 0xac ed
     STREAM_VERSION - 0x00 05
     Contents
       TC_NULL - 0x70
     
-    $ java -jar SerializationDumper-v1.1.jar -r raw-input-file.bin
+    $ java -jar SerializationDumper-v1.13.jar -r raw-input-file.bin
     STREAM_MAGIC - 0xac ed
     STREAM_VERSION - 0x00 05
     Contents
@@ -88,7 +88,7 @@ To modify the string value from `ABCD` to `AAAABBBB` we must update the hex-asci
 
 If we save this to the file `dumped.txt` then we can rebuild the stream as follows:
 
-    $ java -jar SerializationDumper-v1.1.jar -b dumped.txt rebuilt.bin
+    $ java -jar SerializationDumper-v1.13.jar -b dumped.txt rebuilt.bin
 
 The file `rebuilt.bin` will now contain the raw bytes of the modified serialization stream. If we encode that file as hex-ascii we get the following:
 
