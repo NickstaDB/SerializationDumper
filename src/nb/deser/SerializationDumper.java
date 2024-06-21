@@ -1397,15 +1397,16 @@ public class SerializationDumper {
 		byte b1, b2, b3, b4, b5, b6, b7, b8;
 		b1 = this._data.pop(); b2 = this._data.pop(); b3 = this._data.pop(); b4 = this._data.pop();
 		b5 = this._data.pop(); b6 = this._data.pop(); b7 = this._data.pop(); b8 = this._data.pop();
-		this.print("(double)" + (double)(((b1 << 56) & 0xff00000000000000L) +
-										 ((b2 << 48) &   0xff000000000000L) +
-										 ((b3 << 40) &     0xff0000000000L) +
-										 ((b4 << 32) &       0xff00000000L) +
-										 ((b5 << 24) &         0xff000000 ) +
-										 ((b6 << 16) &           0xff0000 ) +
-										 ((b7 <<  8) &             0xff00 ) + 
-										 ( b8        &               0xff )) + " - 0x" + this.byteToHex(b1) +
-				   " " + this.byteToHex(b2) + " " + this.byteToHex(b3) + " " + this.byteToHex(b4) + " " + this.byteToHex(b5) + " " + this.byteToHex(b6) + " " +
+		this.print("(double)" + Double.longBitsToDouble((((long)b1 << 56) & 0xff00000000000000L) +
+														(((long)b2 << 48) &   0xff000000000000L) +
+														(((long)b3 << 40) &     0xff0000000000L) +
+														(((long)b4 << 32) &       0xff00000000L) +
+														((      b5 << 24) &         0xff000000 ) +
+														((      b6 << 16) &           0xff0000 ) +
+														((      b7 <<  8) &             0xff00 ) +
+														((      b8      ) &               0xff )) +
+				   " - 0x" + this.byteToHex(b1) + " " + this.byteToHex(b2) + " " + this.byteToHex(b3) +
+				   " " + this.byteToHex(b4) + " " + this.byteToHex(b5) + " " + this.byteToHex(b6) + " " +
 				   this.byteToHex(b7) + " " + this.byteToHex(b8));
 	}
 	
@@ -1415,10 +1416,11 @@ public class SerializationDumper {
 	private void readFloatField() {
 		byte b1, b2, b3, b4;
 		b1 = this._data.pop(); b2 = this._data.pop(); b3 = this._data.pop(); b4 = this._data.pop();
-		this.print("(float)" + (float)(((b1 << 24) & 0xff000000) +
-									   ((b2 << 16) &   0xff0000) +
-									   ((b3 <<  8) &     0xff00) +
-									   ( b4        &       0xff)) + " - 0x" + this.byteToHex(b1) + " " + this.byteToHex(b2) + " " + this.byteToHex(b3) +
+		this.print("(float)" + Float.intBitsToFloat(((b1 << 24) & 0xff000000) +
+													((b2 << 16) &   0xff0000) +
+													((b3 <<  8) &     0xff00) +
+													( b4        &       0xff)) +
+				   " - 0x" + this.byteToHex(b1) + " " + this.byteToHex(b2) + " " + this.byteToHex(b3) +
 				   " " + this.byteToHex(b4));
 	}
 	
