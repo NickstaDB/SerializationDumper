@@ -9,6 +9,8 @@ Download v1.11 built and ready to run from here: [https://github.com/NickstaDB/S
 
 \* See the limitations section below for more details.
 
+**Update 21/06/2024:** Fixed bugs in `readFloatField()` and `readDoubleField()`.
+
 **Update 19/12/2018:** SerializationDumper now supports rebuilding serialization streams so you can dump a Java serialization stream to a text file, modify the hex or string values, then convert the text file back into a binary serialization stream. See the section below on [Rebuilding Serialization Streams](#rebuilding-serialization-streams) for an example of this.
 
 ## Building
