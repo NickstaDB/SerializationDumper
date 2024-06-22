@@ -1494,6 +1494,14 @@ public class SerializationDumper {
 			case (byte)0x71:		//TC_REFERENCE
 				this.readPrevObject();
 				break;
+
+			case (byte)0x77:                //TC_BLOCKDATA
+                                this.readBlockData();
+                                break;
+
+                        case (byte)0x7a:                //TC_BLOCKDATALONG
+                                this.readLongBlockData();
+                                break;
 				
 			default:				//Unknown
 				throw new RuntimeException("Error: Unexpected array field value type (0x" + this.byteToHex(this._data.peek()));
